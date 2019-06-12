@@ -20,6 +20,7 @@ touch db.json
   ]
 }
 
+# run json-server on db.json
 json-server --watch db.json
 
 ```
