@@ -2,14 +2,20 @@ const apiBaseUrl = "http://localhost";
 // const apiBaseUrl = "http://178.128.90.148";
 const dbPort = 3000;
 
+/** 
+ * Fetches paginated data and data count from json-server
+ * calls renderPaymentData function with that information 
+ * and deactivates infinite scroll if data runs out
+ */
 const fetchPaymentData = async () => {
     const infinite_scroll = document.querySelector('lt-infinite-scroll');
     const page = infinite_scroll.page;
     const filter = infinite_scroll.filter;
     const limit = 5;
     const popup = document.querySelector('lt-popup');
-    const url = filter ? apiBaseUrl + ':' + dbPort + '/payments?searchfield_like=' + filter + '&_sort=id&_order=desc&_page=' + page + '&_limit=5' :
-        apiBaseUrl + ':' + dbPort + '/payments?_sort=id&_order=desc&_page=' + page + '&_limit=' + limit;
+    const url = filter ? 
+            `${apiBaseUrl}:${dbPort}/payments?searchfield_like=${filter}&_sort=id&_order=desc&_page=${page}&_limit=${limit}` :
+            `${apiBaseUrl}:${dbPort}/payments?_sort=id&_order=desc&_page=${page}&_limit=${limit}`;
     try {
         const response = await fetch(url);
         if (response.status !== 200) throw err;
@@ -26,6 +32,11 @@ const fetchPaymentData = async () => {
     }
 }
 
+
+/** 
+ * Adds privided data in json-server database and
+ * uppend new record in our list
+ */
 const addPaymentData = async (data, form) => {
     let options = {
         method: 'POST',
@@ -38,7 +49,7 @@ const addPaymentData = async (data, form) => {
     const modal = document.querySelector('lt-modal');
     const popup = document.querySelector('lt-popup');
     loader.open();
-    url = apiBaseUrl + ":" + dbPort + "/payments";
+    url = `${apiBaseUrl}:${dbPort}/payments`;
     try {
         const response = await fetch(url, options);
         if (response.status !== 201) throw err;
@@ -58,6 +69,11 @@ const addPaymentData = async (data, form) => {
     }
 }
 
+
+/** 
+ * Clears our accordeon and uppends only infinite scroll
+ * so that infinite scroll will fetch data again
+ */
 const refreshPaymentData = (filter) => {
     const accordion = document.querySelector('lt-accordion');
     const infinite_scroll = document.createElement('lt-infinite-scroll');
@@ -66,6 +82,12 @@ const refreshPaymentData = (filter) => {
     accordion.appendChild(infinite_scroll);
 }
 
+
+/** 
+ * Takes payments array and uppends
+ * each of them in our list
+ */
+
 const renderPaymentData = (payments, count) => {
     for (let i = 0; i < payments.length; i++) {
         const payment = payments[i];
@@ -73,7 +95,14 @@ const renderPaymentData = (payments, count) => {
     }
 }
 
-/* appends below if position is true */
+
+/** 
+ * Appends given payment in our list
+ * Appends below if position is given and it's true
+ * Appends above if not is given or it's false
+ * Also updates payments count or increments it if count isn't given (this means just new payment is added)
+ * If filter is applied to infinite scroll, refreshes data.
+ */
 const appendPayment = (payment, position, count) => {
     const total_payment = document.querySelector('.payment-total');
     const infinite_scroll = document.querySelector('lt-infinite-scroll');
@@ -86,23 +115,22 @@ const appendPayment = (payment, position, count) => {
     tmpl.querySelector('h3').innerText = payment.title;
     tmpl.querySelector('.payment-value').innerText = payment.amount;
     tmpl.querySelector('.payment-category').innerText = payment.category;
+    tmpl.querySelector('.payment-value-container').classList.add((parseFloat(payment.amount) > 0) ? "payment-positive" : "payment-negative");
     tmpl.querySelector('.payment-date').innerText = "on " + (new Date(payment.date)).toDateString();
     tmpl.querySelector('.payment-comment').innerText = payment.comment;
     total_payment.innerText = Math.round((parseFloat(total_payment.innerText) + parseFloat(payment.amount)) * 100) / 100;
     if (position) accordion.insertBefore(tmpl, infinite_scroll);
-    else if (infinite_scroll.filter) {
-        refreshPaymentData();
-        fetchPaymentData()
-    } else {
-        accordion.insertBefore(tmpl, accordion.firstChild);
-    }
+    else if (infinite_scroll.filter) refreshPaymentData(); 
+    else accordion.insertBefore(tmpl, accordion.firstChild);
 }
 
 
+/**Just opens modal */
 const showModal = () => {
     document.querySelector('lt-modal').open();
 }
 
+/**Validates and submits our modal form */
 const submitForm = () => {
     const form = document.getElementById('my-form');
     if (form.checkValidity()) {
@@ -121,6 +149,8 @@ const submitForm = () => {
     }
 }
 
+
+/**Refreshes payment data providing filter text */
 const filter = () => {
     document.querySelector('.payment-total').innerText = 0;
     let filter_text = document.getElementById('filter-input').value;
