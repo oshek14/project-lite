@@ -2,7 +2,7 @@ const lt_collapse_template = document.createElement('template');
 lt_collapse_template.innerHTML = `
 <style>
     :host #collapse {
-        padding: 15px;
+        padding: 10px;
         border-bottom: 1px solid lightgray;
     }
     :host #collapse {
@@ -11,13 +11,10 @@ lt_collapse_template.innerHTML = `
     :host([collapsed]) #collapse {
         background: #fafafa;
     }
-    slot[name=body]::slotted(*) {
+    #collapse ::slotted([slot=body]) {
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.2s ease-out;
-    }
-    :host([collapsed]) slot[name=body]::slotted(*) {
-        
     }
 </style>
 <div id="collapse">
@@ -25,9 +22,13 @@ lt_collapse_template.innerHTML = `
     <slot name="body"></slot>
 </div>
 `;
+
+window.ShadyCSS && ShadyCSS.prepareTemplate(lt_collapse_template, 'lt-collapse');
+
 class Collapse extends HTMLElement {
     constructor() {
         super();
+        window.ShadyCSS && ShadyCSS.styleElement(this);
         if (!this.shadowRoot) {
             this.attachShadow({
                 mode: 'open'

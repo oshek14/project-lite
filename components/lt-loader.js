@@ -1,6 +1,10 @@
 const lt_loader_template = document.createElement('template');
 lt_loader_template.innerHTML = `
 <style>
+    #backdrop,
+    #lt-loader {
+        transition: all 0.4s;
+    }
     :host([opened]) #backdrop {
         position: fixed;
         top: 0;
@@ -9,6 +13,7 @@ lt_loader_template.innerHTML = `
         height: 100vh;
         pointer-events: all;
         z-index: 100;
+        background: white;
     }
     :host([opened]) #lt-loader {
         position: fixed;
@@ -26,8 +31,8 @@ lt_loader_template.innerHTML = `
         height: 46px;
         margin: 1px;
         border-radius: 50%;
-        border: 5px solid #03a9f4;
-        border-color: #03a9f4 transparent #03a9f4 transparent;
+        border: 5px solid #a1c4ff;
+        border-color: #a1c4ff transparent #a1c4ff transparent;
         animation: lt-loader 1.2s linear infinite;
     }
     @keyframes lt-loader {
@@ -42,9 +47,13 @@ lt_loader_template.innerHTML = `
 <div id="backdrop"></div>
 <div id="lt-loader"></div>
 `;
+
+window.ShadyCSS && ShadyCSS.prepareTemplate(lt_loader_template, 'lt-loader');
+
 class Loader extends HTMLElement {
     constructor() {
         super();
+        window.ShadyCSS && ShadyCSS.styleElement(this);
         if (!this.shadowRoot) {
             this.attachShadow({ mode: 'open' });
             this.shadowRoot.appendChild(lt_loader_template.content.cloneNode(true));

@@ -42,11 +42,15 @@ lt_infinite_scroll_template.innerHTML = `
     <div class="lds-dual-ring"><span id="no-more-content">No more content</span></div>
 </div>
 `;
+
+window.ShadyCSS && ShadyCSS.prepareTemplate(lt_infinite_scroll_template, 'lt-infinite-scroll');
+
 class InfiniteScroll extends HTMLElement {
     constructor() {
         super();
         this.page = 0;
-        this.filter = "";
+        this.filter = null;
+        window.ShadyCSS && ShadyCSS.styleElement(this);
         if (!this.shadowRoot) {
             this.attachShadow({
                 mode: 'open'

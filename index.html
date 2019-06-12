@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="static/style.css" />
+    <title>Lite Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- load the webcomponents loader, which injects the necessary polyfill bundle -->
+    <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
+    <script src="components/lt-loader.js"></script>
+    <script src="components/lt-modal.js"></script>
+    <script src="components/lt-collapse.js"></script>
+    <script src="components/lt-accordion.js"></script>
+    <script src="components/lt-popup.js"></script>
+    <script src="components/lt-infinite-scroll.js"></script>
+    <script src="src/js-helper.js"></script>
+</head>
+
+<body>
+    <lt-popup></lt-popup>
+    <lt-loader></lt-loader>
+    <lt-modal>
+        <h4 slot="headline">ADD NEW PAYMENT</h4>
+        <form id="my-form">
+            <div>
+                <div class="input-container modal-row-6">
+                    <label>Title:</label>
+                    <input class="modal-input" type="text" name="title" placeholder="some payment" required>
+                </div>
+
+                <div class="input-container modal-row-3">
+                    <label>Amount:</label>
+                    <input class="modal-input" type="number" name="amount" step="0.01" required>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <label>Category:</label>
+                <select class="modal-select" name="category" required>
+                    <option value=""></option>
+                    <option value="payment service">payment service</option>
+                    <option value="gasoline">gasoline</option>
+                    <option value="food">food</option>
+                    <option value="charity">charity</option>
+                    <option value="transport">transport</option>
+                </select>
+            </div>
+
+            <div class="input-container">
+                <label>Date:</label>
+                <input class="modal-input modal-date" type="date" name="date" required>
+            </div>
+
+            <div class="input-container">
+                <label>Comment:</label>
+                <textarea class="modal-input" name="comment" required></textarea>
+            </div>
+            <button id="my-form-button" class="modal-button" type="button" onclick="submitForm()">CREATE</button>
+            <button id="hidden-submit" hidden type="submit"></button>
+        </form>
+    </lt-modal>
+    <header class="header">
+        <div class="header-content-wrapper">
+            <div style="display: inline-block;">
+                <img src="static/images/logo.jpg" style="height: 50px;">
+            </div>
+            <div class="header-welcome">
+                <span>hello user</span>
+            </div>
+        </div>
+    </header>
+    <div class="content-wrapper">
+        <div class="content">
+            <div class="card">
+                <div class="flex-wrapper-menu">
+                    <div>
+                        <div class="menu-item-left">
+                            <div class="outline-button" onclick="showModal()">
+                                <i class="fa fa-plus-circle" style="font-size: 25px; vertical-align: middle;"></i>
+                                <span class="outline-button-text"
+                                    style="display: inline-block; font-size: 10px; vertical-align: middle;">ADD
+                                    PAYMENT</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="menu-item-right" style="color: lightgray;">
+                            <i class="fa fa-search"></i>
+                            <input id="filter-input" class="filter-input" type="text"
+                                placeholder="Filter by any proepry..." />
+                        </div>
+                        <div class="menu-item-right">
+                            <button class="flat-radius-button" onclick="filter()">
+                                Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2><span id="records-number">0</span> Records Found</h2>
+
+            <lt-accordion>
+                <!-- here comes collapse template -->
+                <lt-infinite-scroll></lt-infinite-scroll>
+            </lt-accordion>
+
+            <div class="payment-total-wrapper">
+                <p class="payment-total-header">
+                    Total:
+                </p>
+                <p class="payment-total">
+                    0
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-wrapper">
+        <div class="footer-content">
+            <div class="footer-year">2019</div>
+            <div class="footer-text">Payment managment</div>
+        </div>
+    </footer>
+
+    <!-- Templates -->
+
+    <template id="collapse-template">
+        <lt-collapse>
+            <div slot="header">
+                <div style="display: flex">
+                    <div style="flex: 1">
+                        <h3></h3>
+                        <div class="txt-left">
+                            <span class="payment-category"></span>
+                        </div>
+                    </div>
+                    <div style="flex: 1">
+                        <p class="txt-right payment-date"></p>
+                        <p class="txt-right payment-value"></p>
+                        <p class="txt-right payment-currency">GEL</p>
+                    </div>
+                </div>
+            </div>
+            <div slot="body">
+                <p class="payment-comment-header">Comment</p>
+                <p class="payment-comment"></p>
+            </div>
+        </lt-collapse>
+    </template>
+
+    <!-- Scripts -->
+
+    <script>
+        document.querySelector('lt-accordion').addEventListener('request-data', function () {
+            fetchPaymentData();
+        })
+    </script>
+</body>
+
+</html>

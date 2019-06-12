@@ -58,9 +58,12 @@ lt_popup_template.innerHTML = `
 </div>
 `;
 
+window.ShadyCSS && ShadyCSS.prepareTemplate(lt_popup_template, 'lt-popup');
+
 class Popup extends HTMLElement {
     constructor() {
         super();
+        window.ShadyCSS && ShadyCSS.styleElement(this);
         if (!this.shadowRoot) {
             this.attachShadow({
                 mode: 'open'

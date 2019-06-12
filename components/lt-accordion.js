@@ -2,8 +2,9 @@ const lt_accordion_template = document.createElement('template');
 lt_accordion_template.innerHTML = `
 <style>
     #accordion {
-        max-height: 300px; 
+        max-height: 340px; 
         overflow: auto;
+        max-height 0.5s cubic-bezier(0, 1, 0, 1);
     }
     ::-webkit-scrollbar {
         width: 7px;
@@ -21,10 +22,14 @@ lt_accordion_template.innerHTML = `
     <slot></slot>
 </div>
 `;
+
+window.ShadyCSS && ShadyCSS.prepareTemplate(lt_accordion_template, 'lt-accordion');
+
 class Accordion extends HTMLElement {
     constructor() {
         super();
         this.collapsedOne;
+        window.ShadyCSS && ShadyCSS.styleElement(this);
         if (!this.shadowRoot) {
             this.attachShadow({ mode: 'open' });
             this.shadowRoot.appendChild(lt_accordion_template.content.cloneNode(true));

@@ -7,7 +7,7 @@ lt_modal_template.innerHTML = `
         left: 0;
         width: 100%;
         height: 100vh;
-        background: rgba(0,0,0,0.75);
+        background: rgba(45, 57, 90, 0.76);
         z-index: 10;
         opacity: 0;
         pointer-events: none;
@@ -26,8 +26,8 @@ lt_modal_template.innerHTML = `
     #modal {
         position: fixed;
         top: 15vh;
-        left: 30%;
-        width: 40%;
+        left: 35%;
+        width: 30%;
         z-index: 20;
         background: white;
         box-shadow: 0 2px 8px rgba(0,0,0,0.26);
@@ -37,6 +37,18 @@ lt_modal_template.innerHTML = `
         opacity: 0;
         pointer-events: none;
         transition: all 0.3s ease-out;
+    }
+    @media (max-width: 1200px){
+        #modal {
+            width: 40%;
+            left: 30%;
+        }
+    }
+    @media (max-width: 1024px){
+        #modal {
+            width: 50%;
+            left: 25%;
+        }
     }
     @media (max-width: 768px){
         #modal {
@@ -50,10 +62,10 @@ lt_modal_template.innerHTML = `
             left: 5%;
         }
     }
-    ::slotted(h4) {
+    header ::slotted(*) {
         padding: 0.5rem;
         font-size: 0.75rem;
-        color: lightblue;
+        color: #75788a;
         margin: 0;
     }
     #content {
@@ -80,9 +92,12 @@ lt_modal_template.innerHTML = `
 </div>
 `;
 
+window.ShadyCSS && ShadyCSS.prepareTemplate(lt_modal_template, 'lt-modal');
+
 class Modal extends HTMLElement {
     constructor() {
         super();
+        window.ShadyCSS && ShadyCSS.styleElement(this);
         if (!this.shadowRoot) {
             this.attachShadow({
                 mode: 'open'
