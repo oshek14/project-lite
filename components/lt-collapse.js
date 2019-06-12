@@ -35,9 +35,7 @@ class Collapse extends HTMLElement {
             });
             this.shadowRoot.appendChild(lt_collapse_template.content.cloneNode(true));
         }
-        this.addEventListener('click', function (e) {
-            this.dispatchEvent(new Event('collapse-clicked', {bubbles: true, composed: true}));
-        });
+        this.addEventListener('click', this.clickAction);
     }
 
     connectedCallback() {
@@ -65,6 +63,14 @@ class Collapse extends HTMLElement {
             this.removeAttribute('collapsed');
         }
         this.isCollapsed = false;
+    }
+
+    clickAction = () => {
+        this.dispatchEvent(new Event('collapse-clicked', {bubbles: true, composed: true}));
+    }
+
+    disconnectedCallback() {
+        this.removeEventListener('click', this.clickAction);
     }
 }
 customElements.define('lt-collapse', Collapse);

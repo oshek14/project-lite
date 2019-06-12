@@ -89,15 +89,14 @@ const refreshPaymentData = (filter) => {
  */
 
 const renderPaymentData = (payments, count) => {
-    for (let i = 0; i < payments.length; i++) {
-        const payment = payments[i];
+    payments.map(payment => {
         appendPayment(payment, true, count);
-    }
+    })
 }
 
 
 /** 
- * Appends given payment in our list
+ * Creates payment template and appends it in our list
  * Appends below if position is given and it's true
  * Appends above if not is given or it's false
  * Also updates payments count or increments it if count isn't given (this means just new payment is added)
@@ -110,7 +109,18 @@ const appendPayment = (payment, position, count) => {
     const collapse_template = document.getElementById('collapse-template');
     const records_count = document.getElementById('records-number');
     const tmpl = collapse_template.content.cloneNode(true);
+    buildPaymentTemplate(tmpl, payment);
     records_count.innerText = count ? count : parseInt(records_count.innerText) + 1;
+    total_payment.innerText = Math.round((parseFloat(total_payment.innerText) + parseFloat(payment.amount)) * 100) / 100;
+    
+    if (position) accordion.insertBefore(tmpl, infinite_scroll);
+    else if (infinite_scroll.filter) refreshPaymentData(); 
+    else accordion.insertBefore(tmpl, accordion.firstChild);
+}
+
+
+/**Builds given template with given payment data */
+const buildPaymentTemplate = (tmpl, payment) => {
     tmpl.querySelector("lt-collapse").setAttribute('id', 'lt-collapse-' + payment.id);
     tmpl.querySelector('h3').innerText = payment.title;
     tmpl.querySelector('.payment-value').innerText = payment.amount;
@@ -118,10 +128,6 @@ const appendPayment = (payment, position, count) => {
     tmpl.querySelector('.payment-value-container').classList.add((parseFloat(payment.amount) > 0) ? "payment-positive" : "payment-negative");
     tmpl.querySelector('.payment-date').innerText = "on " + (new Date(payment.date)).toDateString();
     tmpl.querySelector('.payment-comment').innerText = payment.comment;
-    total_payment.innerText = Math.round((parseFloat(total_payment.innerText) + parseFloat(payment.amount)) * 100) / 100;
-    if (position) accordion.insertBefore(tmpl, infinite_scroll);
-    else if (infinite_scroll.filter) refreshPaymentData(); 
-    else accordion.insertBefore(tmpl, accordion.firstChild);
 }
 
 
@@ -129,6 +135,7 @@ const appendPayment = (payment, position, count) => {
 const showModal = () => {
     document.querySelector('lt-modal').open();
 }
+
 
 /**Validates and submits our modal form */
 const submitForm = () => {

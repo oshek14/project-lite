@@ -104,31 +104,26 @@ class Modal extends HTMLElement {
             });
             this.shadowRoot.appendChild(lt_modal_template.content.cloneNode(true));
         }
-        this.isOpen = false;
-        const backdrop = this.shadowRoot.querySelector('#backdrop');
-        const modal_close = this.shadowRoot.querySelector('#modal-close');
-        backdrop.addEventListener('click', this.hide.bind(this));
-        modal_close.addEventListener('click', this.hide.bind(this));
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        this.isOpen = this.hasAttribute('opened');
-    }
-
-    static get observedAttributes() {
-        return ['opened'];
+        this.backdrop = this.shadowRoot.getElementById('backdrop');
+        this.modal_close = this.shadowRoot.getElementById('modal-close');
+        this.clickAction = this.hide.bind(this);
+        this.backdrop.addEventListener('click', this.clickAction);
+        this.modal_close.addEventListener('click', this.clickAction);
     }
 
     open() {
         this.setAttribute('opened', '');
-        this.isOpen = true;
     }
 
     hide() {
         if (this.hasAttribute('opened')) {
             this.removeAttribute('opened');
         }
-        this.isOpen = false;
+    }
+
+    disconnectedCallback() {
+        this.backdrop.removeEventListener('click', this.clickAction);
+        this.modal_close.removeEventListener('click', this.clickAction);
     }
 }
 customElements.define('lt-modal', Modal);

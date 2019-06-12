@@ -34,22 +34,28 @@ class Accordion extends HTMLElement {
             this.attachShadow({ mode: 'open' });
             this.shadowRoot.appendChild(lt_accordion_template.content.cloneNode(true));
         }
-        this.addEventListener('collapse-clicked', function (e) {
-            if(e.srcElement.hasAttribute('collapsed')){
-                e.srcElement.hide();
-                delete this.collapsedOne;
-            }else{
-                e.srcElement.collapse();
-                if(this.collapsedOne) this.collapsedOne.hide();
-                this.collapsedOne = e.srcElement;
-            }
-        });
+        this.addEventListener('collapse-clicked', this.collapseClickedAction);
     }
 
     clear() {
         const first_collapse = this.shadowRoot.querySelector('slot').assignedNodes()[0];
         //Let's remove all collapses
         if(first_collapse) first_collapse.parentElement.innerHTML = "";
+    }
+
+    collapseClickedAction(e) {
+        if(e.srcElement.hasAttribute('collapsed')){
+            e.srcElement.hide();
+            delete this.collapsedOne;
+        }else{
+            e.srcElement.collapse();
+            if(this.collapsedOne) this.collapsedOne.hide();
+            this.collapsedOne = e.srcElement;
+        }
+    }
+
+    disconnectedCallback() {
+        this.removeEventListener('collapse-clicked', this.collapseClickedAction);
     }
 }
 customElements.define('lt-accordion', Accordion);
