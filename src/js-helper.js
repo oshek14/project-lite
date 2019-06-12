@@ -1,11 +1,15 @@
+const apiBaseUrl = "http://localhost";
+// const apiBaseUrl = "http://178.128.90.148";
+const dbPort = 3000;
+
 const fetchPaymentData = async () => {
     const infinite_scroll = document.querySelector('lt-infinite-scroll');
     const page = infinite_scroll.page;
     const filter = infinite_scroll.filter;
     const limit = 5;
-    const popup = document.querySelector('lt-popup')
-    const url = filter ? 'http://localhost:3000/payments?searchfield_like=' + filter + '&_sort=id&_order=desc&_page=' + page + '&_limit=5' :
-        'http://localhost:3000/payments?_sort=id&_order=desc&_page=' + page + '&_limit=' + limit;
+    const popup = document.querySelector('lt-popup');
+    const url = filter ? apiBaseUrl + ':' + dbPort + '/payments?searchfield_like=' + filter + '&_sort=id&_order=desc&_page=' + page + '&_limit=5' :
+        apiBaseUrl + ':' + dbPort + '/payments?_sort=id&_order=desc&_page=' + page + '&_limit=' + limit;
     try {
         const response = await fetch(url);
         if (response.status !== 200) throw err;
@@ -34,8 +38,9 @@ const addPaymentData = async (data, form) => {
     const modal = document.querySelector('lt-modal');
     const popup = document.querySelector('lt-popup');
     loader.open();
+    url = apiBaseUrl + ":" + dbPort + "/payments";
     try {
-        const response = await fetch("http://localhost:3000/payments", options);
+        const response = await fetch(url, options);
         if (response.status !== 201) throw err;
         try {
             const data = await response.json();
