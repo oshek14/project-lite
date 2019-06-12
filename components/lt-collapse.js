@@ -65,7 +65,7 @@ class Collapse extends HTMLElement {
         this.isCollapsed = false;
     }
 
-    clickAction = () => {
+    clickAction() {
         this.dispatchEvent(new Event('collapse-clicked', {bubbles: true, composed: true}));
     }
 
